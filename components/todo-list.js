@@ -47,7 +47,7 @@ function getHTML() {
   }
 </style>
 <div id="container">
-  <h1>To do list</h1>
+  <h1>Todo List</h1>
   
   <form>
     <input type="text" placeholder="Add a new task" />
