@@ -17,13 +17,35 @@ class TodoList extends HTMLElement {
       if (inputValue.length == 0) return;
       select('input').value = "";
       // Create new item
-      const newElement = document.createElement('todo-item');
-      newElement.setAttribute('data-value', inputValue);
-      this.tasksElement.insertBefore(newElement, this.tasksElement.firstChild);
-      newElement.addEventListener('removed', evt => {
-        this.tasksElement.removeChild(newElement);
-      });
+      this.addTask(inputValue);
+      this.dispatchEvent(new CustomEvent('updated'));
     });
+  }
+
+  addTask(text, completed = false) {
+    const newElement = document.createElement('todo-item');
+    newElement.setAttribute('data-value', text);
+    newElement.completed = completed;
+    this.tasksElement.insertBefore(newElement, this.tasksElement.firstChild);
+
+    newElement.addEventListener('removed', evt => {
+      this.tasksElement.removeChild(newElement);
+      this.dispatchEvent(new CustomEvent('updated'));
+    });
+    newElement.addEventListener('stateChange', evt => {
+      this.dispatchEvent(new CustomEvent('updated'));
+    });
+  }
+
+  getAll() {
+    return [...this.tasksElement.children].map(el => ({
+      text: el.getAttribute('data-value'),
+      completed: el.completed,
+    }));
+  }
+
+  load(tasks) {
+    tasks.reverse().forEach(task => this.addTask(task.text, task.completed));
   }
 }
 customElements.define('todo-list', TodoList);
