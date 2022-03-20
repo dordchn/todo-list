@@ -7,8 +7,8 @@ class TodoItem extends HTMLElement {
     this.select = selector => this.shadowRoot.querySelector(selector);
 
     this.select('#check').addEventListener('click', evt => {
-      this.select('#container').classList.toggle('done');
-      this.dispatchEvent(new CustomEvent('change'));
+      this.completed = !this.completed;
+      this.dispatchEvent(new CustomEvent('stateChange'));
     });
     this.select('#cross').addEventListener('click', evt => {
       this.dispatchEvent(new CustomEvent('removed'));
@@ -22,6 +22,18 @@ class TodoItem extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (name == 'data-value') {
       this.select("#content").textContent = newValue;
+    }
+  }
+
+  get completed() {
+    return this.select('#container').classList.contains('done');
+  }
+
+  set completed(isCompleted) {
+    if (isCompleted) {
+      this.select('#container').classList.add('done');
+    } else {
+      this.select('#container').classList.remove('done');
     }
   }
 }
